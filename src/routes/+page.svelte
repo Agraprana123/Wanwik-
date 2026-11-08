@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import Heart3D from '../lib/components/Heart3D.svelte';
+	import Reel from '../lib/components/Reel.svelte';
+	import Stack3D from '../lib/components/Stack3D.svelte';
 	import { reveal, tilt, parallax } from '../lib/actions';
 	import { couple, story, photos, reasons, letter } from '../lib/config';
 
@@ -18,13 +19,11 @@
 	/* ---------- State yang terhubung ke scroll ---------- */
 	let progress = $state(0);
 	let heroP = $state(0);
-	let ringAngle = $state(0);
 	let lineP = $state(0);
 	let lit = $state(0);
 
 	let heroEl: HTMLElement;
 	let timelineEl: HTMLElement;
-	let ringEl: HTMLElement;
 	let letterEl: HTMLElement;
 
 	const words = letter.split(/\s+/);
@@ -47,10 +46,6 @@
 			progress = max > 0 ? clamp(scrollY / max) : 0;
 			heroP = clamp(scrollY / vh);
 
-			if (ringEl) {
-				const r = ringEl.getBoundingClientRect();
-				ringAngle = clamp(-r.top / (r.height - vh)) * 360;
-			}
 			if (timelineEl) {
 				const r = timelineEl.getBoundingClientRect();
 				lineP = clamp((vh * 0.7 - r.top) / r.height);
@@ -83,7 +78,7 @@
 <div class="progress" style="transform: scaleX({progress})"></div>
 
 <nav class="nav glass" aria-label="Navigasi">
-	<a class="brand" href="#kita">{couple.me[0]}<span>♥</span>{couple.partner[0]}</a>
+	<a class="brand" href="#kita">{couple.me[0]}<span>&amp;</span>{couple.partner[0]}</a>
 	<div class="links">
 		<a href="#waktu">Waktu</a>
 		<a href="#cerita">Cerita</a>
@@ -105,14 +100,14 @@
 		<div class="orb o1" use:parallax={0.4}></div>
 		<div class="orb o2" use:parallax={-0.2}></div>
 
-		<div class="float f1" style="--d:38" use:parallax={-0.22}><span class="chip glass">Selamanya</span></div>
-		<div class="float f2" style="--d:-30" use:parallax={0.18}><span class="chip glass">Forever</span></div>
-		<div class="float f3" style="--d:52" use:parallax={-0.3}><span class="chip glass">♥ Kita</span></div>
-		<div class="float f4" style="--d:-44" use:parallax={0.26}><span class="chip glass">Cinta</span></div>
+		<div class="float f1" style="--d:38" use:parallax={-0.22}><span class="clap">Scene 01</span></div>
+		<div class="float f2" style="--d:-30" use:parallax={0.18}><span class="clap">Take 1</span></div>
+		<div class="float f3" style="--d:52" use:parallax={-0.3}><span class="clap">Rolling</span></div>
+		<div class="float f4" style="--d:-44" use:parallax={0.26}><span class="clap">Action!</span></div>
 
 		<div class="hero-inner">
-			<p class="eyebrow in-up" style="--dl:0.1s">Sebuah cerita cinta</p>
-			<div class="heart-wrap" style="--dl:0.3s"><Heart3D /></div>
+			<p class="eyebrow in-up" style="--dl:0.1s">1 · 2 · 3 — Action</p>
+			<div class="heart-wrap" style="--dl:0.3s"><Reel size={200} /></div>
 			<h1 class="names" aria-label="{couple.me} dan {couple.partner}">
 				<span class="name" aria-hidden="true">
 					{#each [...couple.me] as ch, i (i)}<i style="--i:{i}">{ch}</i>{/each}
@@ -127,6 +122,8 @@
 
 		<a class="scroll-cue" href="#waktu" aria-label="Gulir ke bawah"><i></i><span>Scroll</span></a>
 	</section>
+
+	<div class="strip" aria-hidden="true"></div>
 
 	<!-- ===================== COUNTER ===================== -->
 	<section class="sec" id="waktu">
@@ -166,30 +163,10 @@
 		</div>
 	</section>
 
-	<!-- ===================== 3D GALLERY RING ===================== -->
-	<section class="gallery" id="kenangan" bind:this={ringEl}>
-		<div class="sticky">
-			<div class="g-head">
-				<p class="eyebrow">Galeri kenangan</p>
-				<h2 class="title">Putar waktu, <em>temukan kita</em></h2>
-			</div>
-			<div class="scene">
-				<div class="carousel" style="--n:{photos.length}; --a:{ringAngle.toFixed(2)}">
-					{#each photos as p, i (p.caption)}
-						<figure class="pcard" style="--i:{i}">
-							{#if p.src}
-								<img src={p.src} alt={p.caption} loading="lazy" />
-							{:else}
-								<div class="ph"><span>{p.emoji}</span><small>Foto #{i + 1}</small></div>
-							{/if}
-							<figcaption>{p.caption}</figcaption>
-						</figure>
-					{/each}
-				</div>
-			</div>
-			<p class="hint">↓ scroll untuk memutar ↓</p>
-		</div>
-	</section>
+	<!-- ===================== GALERI WEBGL ===================== -->
+	<Stack3D {photos} />
+
+	<div class="strip" aria-hidden="true"></div>
 
 	<!-- ===================== REASONS ===================== -->
 	<section class="sec" id="alasan">
@@ -233,12 +210,12 @@
 	<!-- ===================== FINALE ===================== -->
 	<section class="finale" data-parallax>
 		<div class="rings" aria-hidden="true" use:parallax={-0.1}>
-			<div class="rings-spin"><i class="rg a"></i><i class="rg b"></i></div>
+			<div class="rings-spin"><Reel size={170} speed={26} /></div>
 		</div>
 		<h2 class="script" use:reveal>Aku mencintaimu</h2>
 		<p class="fin-text" use:reveal={150}>{couple.finale}</p>
-		<p class="hint" use:reveal={250}>Klik di mana saja — hujan hati ♥</p>
-		<footer>Dibuat dengan ♥ oleh {couple.me} · {new Date().getFullYear()}</footer>
+		<p class="hint" use:reveal={250}>Cut! Terima kasih sudah menonton.</p>
+		<footer>Disutradarai oleh {couple.me} · {new Date().getFullYear()}</footer>
 	</section>
 </main>
 
@@ -255,8 +232,7 @@
 		height: 3px;
 		z-index: 60;
 		transform-origin: left;
-		background: linear-gradient(90deg, var(--gold), var(--pink), var(--rose));
-		box-shadow: 0 0 14px var(--rose);
+		background: linear-gradient(90deg, var(--gold), var(--rose));
 	}
 	.nav {
 		position: fixed;
@@ -270,6 +246,7 @@
 		padding: 0.55rem 1.1rem;
 		border-radius: 999px;
 		font-size: 0.85rem;
+		background: rgb(10 6 5 / 0.8);
 		animation: navIn 1s var(--ease) 0.6s both;
 	}
 	.brand {
@@ -311,6 +288,13 @@
 		overflow: hidden;
 		text-align: center;
 	}
+	.hero::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		background: linear-gradient(180deg, rgb(8 5 4 / 0.8) 0%, transparent 60%);
+	}
 	.hero-inner {
 		position: relative;
 		z-index: 3;
@@ -343,10 +327,8 @@
 	.name i {
 		display: inline-block;
 		font-style: normal;
-		background: linear-gradient(180deg, #fff 20%, var(--blush) 60%, var(--pink));
-		-webkit-background-clip: text;
-		background-clip: text;
-		color: transparent;
+		color: var(--cream);
+		text-shadow: 0 6px 30px rgb(0 0 0 / 0.45);
 		animation: rise 1.2s var(--ease) both;
 		animation-delay: calc(0.7s + var(--i) * 70ms);
 	}
@@ -354,8 +336,7 @@
 		font-family: var(--script);
 		font-weight: 400;
 		font-size: 1.1em;
-		color: var(--rose);
-		text-shadow: 0 0 40px rgb(255 77 134 / 0.8);
+		color: var(--pink);
 		animation: rise 1.2s var(--ease) 1.1s both;
 	}
 	.tagline {
@@ -376,14 +357,14 @@
 		height: 38vmin;
 		left: 6%;
 		top: 14%;
-		background: radial-gradient(circle at 30% 30%, rgb(255 143 177 / 0.45), transparent 70%);
+		background: radial-gradient(circle at 30% 30%, rgb(255 150 90 / 0.18), transparent 70%);
 	}
 	.o2 {
 		width: 30vmin;
 		height: 30vmin;
 		right: 8%;
 		bottom: 12%;
-		background: radial-gradient(circle at 30% 30%, rgb(255 207 158 / 0.35), transparent 70%);
+		background: radial-gradient(circle at 30% 30%, rgb(0 0 0 / 0.25), transparent 70%);
 	}
 	.float {
 		position: absolute;
@@ -481,10 +462,7 @@
 		font-size: clamp(1.8rem, 5.6vw, 3.6rem);
 		line-height: 1;
 		font-variant-numeric: tabular-nums;
-		background: linear-gradient(180deg, #fff, var(--pink));
-		-webkit-background-clip: text;
-		background-clip: text;
-		color: transparent;
+		color: var(--cream);
 	}
 	.count span {
 		font-size: 0.72rem;
@@ -506,15 +484,14 @@
 		bottom: 0;
 		width: 2px;
 		margin-left: -1px;
-		background: rgb(255 255 255 / 0.1);
+		background: rgb(243 228 207 / 0.22);
 	}
 	.line i {
 		position: absolute;
 		inset: 0;
 		transform-origin: top;
 		transform: scaleY(var(--lp));
-		background: linear-gradient(var(--pink), var(--rose));
-		box-shadow: 0 0 18px var(--rose);
+		background: var(--gold);
 	}
 	.t-item {
 		position: relative;
@@ -534,9 +511,8 @@
 		display: grid;
 		place-items: center;
 		border-radius: 50%;
-		background: #2a0a1f;
-		border: 2px solid var(--rose);
-		box-shadow: 0 0 20px rgb(255 77 134 / 0.7);
+		background: var(--ink);
+		border: 2px solid var(--gold);
 		font-size: 1.05rem;
 		z-index: 2;
 	}
@@ -563,94 +539,6 @@
 		color: var(--muted);
 	}
 
-	/* ---------- 3D Gallery ---------- */
-	.gallery {
-		position: relative;
-		height: 430vh;
-	}
-	.sticky {
-		position: sticky;
-		top: 0;
-		height: 100svh;
-		overflow: hidden;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		gap: 1rem;
-		text-align: center;
-	}
-	.g-head {
-		padding: 0 1.25rem;
-	}
-	.scene {
-		perspective: 1500px;
-		width: 100%;
-		height: clamp(260px, 52vh, 420px);
-		display: grid;
-		place-items: center;
-		margin-top: 1rem;
-	}
-	.carousel {
-		--cw: clamp(150px, 22vw, 240px);
-		--ch: calc(var(--cw) * 1.35);
-		--r: calc(var(--cw) / 2 / tan(180deg / var(--n)) + 34px);
-		position: relative;
-		width: var(--cw);
-		height: var(--ch);
-		transform-style: preserve-3d;
-		transform: translateZ(calc(var(--r) * -1)) rotateY(calc(var(--a) * -1deg));
-	}
-	.pcard {
-		position: absolute;
-		inset: 0;
-		margin: 0;
-		border-radius: 20px;
-		overflow: hidden;
-		backface-visibility: hidden;
-		border: 1px solid var(--glass-b);
-		background: #1d0715;
-		box-shadow: 0 30px 60px -20px rgb(0 0 0 / 0.7);
-		transform: rotateY(calc(var(--i) * 360deg / var(--n))) translateZ(var(--r));
-		-webkit-box-reflect: below 8px linear-gradient(transparent 72%, rgb(255 255 255 / 0.16));
-	}
-	.pcard img {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		display: block;
-	}
-	.ph {
-		width: 100%;
-		height: 100%;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		gap: 0.4rem;
-		background:
-			radial-gradient(circle at 30% 20%, rgb(255 143 177 / 0.55), transparent 60%),
-			linear-gradient(160deg, #5a1236, #25091a);
-	}
-	.ph span {
-		font-size: clamp(2.4rem, 6vw, 3.6rem);
-	}
-	.ph small {
-		color: var(--muted);
-		letter-spacing: 0.2em;
-		text-transform: uppercase;
-		font-size: 0.65rem;
-	}
-	.pcard figcaption {
-		position: absolute;
-		inset: auto 0 0 0;
-		padding: 2.2rem 0.9rem 0.9rem;
-		text-align: center;
-		font-family: var(--serif);
-		font-style: italic;
-		font-size: 0.95rem;
-		background: linear-gradient(transparent, rgb(18 4 12 / 0.9));
-	}
 	.hint {
 		font-size: 0.8rem;
 		letter-spacing: 0.2em;
@@ -719,8 +607,9 @@
 	}
 	.back {
 		transform: rotateY(180deg);
-		background: linear-gradient(150deg, var(--rose), #b0245f);
-		box-shadow: 0 25px 60px -20px rgb(255 60 120 / 0.6);
+		background: var(--cream);
+		color: #1c100c;
+		box-shadow: 0 25px 50px -25px rgb(0 0 0 / 0.7);
 	}
 	.bt {
 		font-family: var(--serif);
@@ -746,14 +635,13 @@
 		line-height: 1.6;
 	}
 	.words span {
-		color: rgb(255 244 240 / 0.16);
+		color: rgb(243 228 207 / 0.2);
 		transition:
 			color 0.5s,
 			text-shadow 0.5s;
 	}
 	.words span.lit {
 		color: var(--cream);
-		text-shadow: 0 0 26px rgb(255 77 134 / 0.45);
 	}
 	.sign {
 		margin-top: 1rem;
@@ -785,25 +673,8 @@
 	.rings-spin {
 		position: absolute;
 		inset: 0;
-		transform-style: preserve-3d;
-		animation: ringspin 14s linear infinite;
-	}
-	.rg {
-		position: absolute;
-		width: var(--rs);
-		height: var(--rs);
-		left: calc(50% - var(--rs) / 2);
-		top: calc(50% - var(--rs) / 2);
-		border-radius: 50%;
-		background: conic-gradient(from 20deg, #fff1d6, #e3a95c, #fff1d6, #b9772f, #fff1d6);
-		-webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 11px), #000 calc(100% - 10px));
-		mask: radial-gradient(farthest-side, transparent calc(100% - 11px), #000 calc(100% - 10px));
-	}
-	.rg.a {
-		transform: translateX(-32px);
-	}
-	.rg.b {
-		transform: translateX(32px) rotateX(90deg);
+		display: grid;
+		place-items: center;
 	}
 	.script {
 		font-family: var(--script);
@@ -811,7 +682,6 @@
 		font-size: clamp(3.2rem, 11vw, 7rem);
 		line-height: 1.1;
 		color: var(--pink);
-		text-shadow: 0 0 50px rgb(255 77 134 / 0.7);
 	}
 	.fin-text {
 		max-width: 34rem;
@@ -824,7 +694,7 @@
 		margin-top: 4rem;
 		font-size: 0.8rem;
 		letter-spacing: 0.12em;
-		color: rgb(255 226 234 / 0.45);
+		color: rgb(243 228 207 / 0.5);
 	}
 
 	/* ---------- Keyframes ---------- */
@@ -907,9 +777,6 @@
 		.t-item.right .dot {
 			left: 0;
 			right: auto;
-		}
-		.g-head .title {
-			font-size: 1.9rem;
 		}
 	}
 	@media (max-width: 480px) {

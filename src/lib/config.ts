@@ -3,7 +3,7 @@
 
 export const couple = {
 	me: 'Juan',
-	partner: 'Sayang', // ← GANTI dengan nama pacarmu
+	partner: 'Aulia', // ← GANTI dengan nama pacarmu
 	startDate: '2024-01-01', // ← GANTI dengan tanggal jadian (format: YYYY-MM-DD)
 	tagline: 'Dua hati, satu cerita',
 	finale: 'Terima kasih sudah menjadi rumah paling hangat untuk hatiku.'
@@ -38,14 +38,38 @@ export const story = [
 
 // Untuk memakai foto asli: taruh file di folder  static/photos/  lalu isi src, contoh '/photos/1.jpg'
 export const photos = [
-	{ src: '', emoji: '🌹', caption: 'Pertemuan pertama' },
-	{ src: '', emoji: '☕', caption: 'Kopi & obrolan panjang' },
-	{ src: '', emoji: '🌅', caption: 'Senja favorit kita' },
-	{ src: '', emoji: '🎞️', caption: 'Potret kecil kita' },
-	{ src: '', emoji: '🍜', caption: 'Makan bareng' },
-	{ src: '', emoji: '🌧️', caption: 'Hujan & payung berdua' },
-	{ src: '', emoji: '🎂', caption: 'Hari ulang tahun' },
-	{ src: '', emoji: '💞', caption: 'Hari ini' }
+	{
+		src: '', emoji: '🌹', caption: 'Pertemuan pertama',
+		text: 'Hari ketika semuanya dimulai, dengan canggung, malu-malu, dan senyum yang tak sengaja.'
+	},
+	{
+		src: '', emoji: '☕', caption: 'Kopi & obrolan panjang',
+		text: 'Secangkir kopi yang sudah dingin, dan cerita yang tak mau berhenti sampai larut.'
+	},
+	{
+		src: '', emoji: '🌅', caption: 'Senja favorit kita',
+		text: 'Langit oranye yang kita tonton berdua, tanpa perlu banyak bicara.'
+	},
+	{
+		src: '', emoji: '🎞️', caption: 'Potret kecil kita',
+		text: 'Selembar potret kecil, tapi cukup untuk mengingat betapa bahagianya kita.'
+	},
+	{
+		src: '', emoji: '🍜', caption: 'Makan bareng',
+		text: 'Makan apa saja terasa enak, asal duduknya berhadapan denganmu.'
+	},
+	{
+		src: '', emoji: '🌧️', caption: 'Hujan & payung berdua',
+		text: 'Satu payung untuk berdua, dan tidak ada yang mau cepat sampai.'
+	},
+	{
+		src: '', emoji: '🎂', caption: 'Hari ulang tahun',
+		text: 'Lilin kecil, harapan besar, dan kamu yang selalu ada di dalamnya.'
+	},
+	{
+		src: '', emoji: '🎬', caption: 'Hari ini',
+		text: 'Masih kamu, masih kita, dan masih jatuh cinta seperti hari pertama.'
+	}
 ];
 
 export const reasons = [
